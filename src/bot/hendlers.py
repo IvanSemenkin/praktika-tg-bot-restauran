@@ -3,14 +3,15 @@ from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, CallbackQuery
 import src.bot.keyboards as kb
 from aiogram.fsm.context import FSMContext
-from src.bot.states import Register
+from src.bot.states import Register, AI
 from src.storage.utils.logger import logger
 import redis
 import os
+from ai import ai_qwen
 
 
 router = Router()
-r = redis.Redis(host=os.getenv("REDIS_HOST"), port=int(os.getenv("REDIS_PORT")), db=0)
+r = redis.Redis(host="localhost", port="6380", db=0)
 user_id = r.incr("user_id_counter")
 
 
@@ -80,3 +81,21 @@ async def register_number(message: Message, state: FSMContext):
         lines.append(f"{key}: {value}")
     text = "\n".join(lines)
     await message.answer(text)
+
+@router.message(F.text == 'ИИ')
+async def ai_start(message: Message, state: FSMContext):
+    await state.set_state(AI.ask) 
+    await message.answer('Что бы вы хотели спросить?')
+
+
+@router.message(AI.ask)
+async def ai_ask(message: Message, state: FSMContext):
+    if message.text.lower() == 'хватит':
+        await message.answer('Пока')
+        state.clear()
+        return
+    
+    ans = ai_qwen(message.text)
+    await message.answer(ans)
+
+    

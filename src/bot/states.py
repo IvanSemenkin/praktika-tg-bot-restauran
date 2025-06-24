@@ -5,3 +5,6 @@ class Register(StatesGroup):
     name = State()
     age = State()
     number = State()
+
+class AI(StatesGroup):
+    ask = State()
