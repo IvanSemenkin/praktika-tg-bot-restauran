@@ -9,8 +9,9 @@ import redis
 
 
 router = Router()
-r = redis.Redis(host='localhost', port=6380, db=0)
-user_id = r.incr('user_id_counter')
+r = redis.Redis(host="localhost", port=6380, db=0)
+user_id = r.incr("user_id_counter")
+
 
 @router.message(CommandStart())
 async def start(message: Message):
@@ -62,19 +63,18 @@ async def register_number(message: Message, state: FSMContext):
     data = await state.get_data()
     await state.clear()
     await message.answer(
-    f"Спасибо, регистрация завершена!\n"
-    f"Привет, {data['name']}, тебе {data['age']} лет, и вот твой номер телефона: {data['number']}"
-)
-    
+        f"Спасибо, регистрация завершена!\n"
+        f"Привет, {data['name']}, тебе {data['age']} лет, и вот твой номер телефона: {data['number']}"
+    )
+
     a = []
     for i in range(1, user_id + 1):
         a.append((f"user:{i} name", (r.get(f"user:{i}:name") or b"").decode()))
         a.append((f"user:{i} age", (r.get(f"user:{i}:age") or b"").decode()))
         a.append((f"user:{i} number", (r.get(f"user:{i}:number") or b"").decode()))
-        
+
     lines = []
     for key, value in a:
         lines.append(f"{key}: {value}")
     text = "\n".join(lines)
     await message.answer(text)
-
