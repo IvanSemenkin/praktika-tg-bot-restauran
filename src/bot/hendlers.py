@@ -1,15 +1,16 @@
-from aiogram import *
-from aiogram.filters import *
-from aiogram.types import *
-import app.keyboards as kb
+from aiogram import Router, F
+from aiogram.filters import CommandStart, Command
+from aiogram.types import Message, CallbackQuery
+import src.bot.keyboards as kb
 from aiogram.fsm.context import FSMContext
-from app.states import Register
-
+from src.bot.states import Register
+from src.storage.utils.logger import logger
 import redis
+import os
 
 
 router = Router()
-r = redis.Redis(host="localhost", port=6380, db=0)
+r = redis.Redis(host=os.getenv("REDIS_HOST"), port=int(os.getenv("REDIS_PORT")), db=0)
 user_id = r.incr("user_id_counter")
 
 
@@ -36,6 +37,7 @@ async def t_shirt(callback: CallbackQuery):
 
 @router.message(Command("reg"))
 async def register(message: Message, state: FSMContext):
+    logger.info("Началась регистрация")
     await state.set_state(Register.name)
     await message.answer("Введите ваше имя:")
 

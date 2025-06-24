@@ -1,15 +1,16 @@
-from aiogram import *
-from aiogram.filters import *
-from aiogram.types import *
-from app.hendlers import router
+from aiogram import Bot, Dispatcher
+from src.bot.hendlers import router
+from src.storage.utils.logger import logger
 
 import asyncio
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
-bot = Bot(token=os.getenv("TOKEN"))
+bot = Bot(token=os.getenv("TaOKEN"))
 dp = Dispatcher()
+
+logger.info("Бот запущен")
 
 
 async def main():
@@ -21,4 +22,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        print("exit")
+        logger.info("Бот остановлен")

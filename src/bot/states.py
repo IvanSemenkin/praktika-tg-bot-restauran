@@ -1,5 +1,4 @@
-from aiogram.fsm.state import *
-from aiogram.fsm.context import *
+from aiogram.fsm.state import State, StatesGroup
 
 
 class Register(StatesGroup):
