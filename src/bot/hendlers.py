@@ -7,7 +7,7 @@ from src.bot.states import Register, AI
 from src.storage.utils.logger import logger
 import redis
 import os
-from ai import ai_qwen
+from ai import ai_qwen_langchain
 
 
 router = Router()
@@ -95,7 +95,7 @@ async def ai_ask(message: Message, state: FSMContext):
         state.clear()
         return
     
-    ans = ai_qwen(message.text)
+    ans = ai_qwen_langchain(message.text)
     await message.answer(ans)
 
     
