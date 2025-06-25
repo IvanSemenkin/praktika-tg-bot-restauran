@@ -1,14 +1,16 @@
 import requests
+from src.storage.utils.logger import logger
 
-chat_history = []
-
-
-def ai_qwen_langchain(mess):
+def ai_qwen_langchain(mess, message, r):
     global chat_history
 
-    chat_history.append(f"Пользователь: {mess}")
-
-    history_context = "\n".join(chat_history[-10:])
+    history_context = ''
+    for i in range(1, 11):
+        try:
+            history_context = history_context + f"user: {r.hget(f"chat_history:{message.from_user.id}:{i}", "user").decode()} \n\n" + f"assistant {r.hget(f"chat_history:{message.from_user.id}:{i}", "assistant").decode()} \n\n"
+        except AttributeError:
+            break
+        
 
     prompt = (
         "Ты помощник в ресторане. "
@@ -16,8 +18,8 @@ def ai_qwen_langchain(mess):
         "Если вопрос не по теме — отвечай: 'Извините, я могу отвечать только по теме еды и ресторана.'"
         "Если есть хоть какой-то намек на еду, блюда, меню или что-то в этом роде - отвечай"
         "Отвечай на русском языке.\n\n"
-        f"{history_context}\n"
-        f"Ассистент:"
+        f"Вот история общения: {history_context}\n"
+        f"А сейчас ответь **только** на: {mess}"
     )
 
     response = requests.post(
@@ -28,7 +30,5 @@ def ai_qwen_langchain(mess):
 
     response.raise_for_status()
     answer = response.json()["response"]
-
-    chat_history.append(f"Ассистент: {answer.strip()}")
 
     return answer.strip()

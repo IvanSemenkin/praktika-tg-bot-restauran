@@ -12,7 +12,6 @@ from ai import ai_qwen_langchain
 
 router = Router()
 r = redis.Redis(host="localhost", port="6380", db=0)
-user_id = r.incr("user_id_counter")
 
 
 @router.message(CommandStart())
@@ -22,7 +21,17 @@ async def start(message: Message):
 
 @router.message(Command("help"))
 async def help(message: Message):
-    await message.answer("Это help")
+    user = ''
+    ai = ''
+    for i in range(1, 11):
+        try:
+            user = user + f"{i}. {r.hget(f"chat_history:{message.from_user.id}:{i}", "user").decode()} \n\n"
+            ai = ai + f"{i}. {r.hget(f"chat_history:{message.from_user.id}:{i}", "assistant").decode()} \n\n"
+        except AttributeError:
+            logger.info(f'help stop on {i}')
+            break
+    await message.answer(f"User: \n{user}")
+    await message.answer(f"AI: \n{ai}")
 
 
 @router.message(F.text.lower() == "ии")
@@ -45,10 +54,15 @@ async def ai_ask(message: Message, state: FSMContext):
         return
 
 
-    ans = ai_qwen_langchain(message.text)
+    ans = ai_qwen_langchain(message.text, message, r)
     
-    r.hset(f"chat_history:{message.from_user.id}", mapping={"user":message.text})
-    logger.info('Redis user')
-    r.hset(f"chat_history:{message.from_user.id}", mapping={"assistant":ans})
-    logger.info('Redis assistant')
+    us_count = r.incr(f"{message.from_user.id}_counter")
+    
+    
+    if int(us_count) >= 10:
+        r.set(f"{message.from_user.id}_counter", 0)
+        logger.info('counter_clear')
+    
+    r.hset(f"chat_history:{message.from_user.id}:{us_count}", mapping={"user":message.text, "assistant":ans})
+    
     await message.answer(ans)
