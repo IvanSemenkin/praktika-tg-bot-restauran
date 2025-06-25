@@ -3,7 +3,7 @@ from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, CallbackQuery
 import src.bot.keyboards as kb
 from aiogram.fsm.context import FSMContext
-from src.bot.states import AI
+from src.bot.states import AI, Clear_db
 from src.storage.utils.logger import logger
 import redis
 import os
@@ -19,7 +19,7 @@ async def start(message: Message):
     await message.answer(f"Привет, {message.from_user.id}", reply_markup=kb.main)
 
 
-@router.message(Command("help"))
+@router.message(Command("info"))
 async def help(message: Message):
     user = ''
     ai = ''
@@ -32,6 +32,7 @@ async def help(message: Message):
             break
     await message.answer(f"User: \n{user}")
     await message.answer(f"AI: \n{ai}")
+
 
 
 @router.message(F.text.lower() == "ии")
@@ -50,7 +51,7 @@ async def ai_ask(message: Message, state: FSMContext):
         or message.text.lower() == "стоп"
     ):
         await message.answer("Пока")
-        state.clear()
+        await state.clear()
         return
 
 
@@ -66,3 +67,20 @@ async def ai_ask(message: Message, state: FSMContext):
     r.hset(f"chat_history:{message.from_user.id}:{us_count}", mapping={"user":message.text, "assistant":ans})
     
     await message.answer(ans)
+
+@router.message(Command("cls"))
+async def help(message: Message, state: FSMContext):
+    await state.set_state(Clear_db.wait_clear)
+    await message.answer('Вы уверены? (Да/Нет)')
+    
+
+@router.message(Clear_db.wait_clear)
+async def clear_w(message: Message, state: FSMContext):
+    if message.text.lower() == 'да':
+        r.flushdb()
+        await state.clear()
+        await message.answer('БД успешно очишена')
+    elif message.text.lower() == 'нет':
+        await message.answer('Очистка отменена')
+        state.clear()
+        
