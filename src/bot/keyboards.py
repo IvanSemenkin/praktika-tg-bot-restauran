@@ -9,7 +9,7 @@ main = ReplyKeyboardMarkup(
     keyboard=[
         [KeyboardButton(text="ИИ")],
     ],
-    resize_keyboard=True,
+    resize_keyboard=True, one_time_keyboard=True
 )
 
 catalog = InlineKeyboardMarkup(
@@ -22,15 +22,9 @@ catalog = InlineKeyboardMarkup(
 )
 
 
-number = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(
-                text="Отправить номер",
-                request_contact=True,
-                resize_keyboard=True,
-                one_time_keyboard=True,
-            ),
-        ]
+type_mess = ReplyKeyboardMarkup(keyboard=[
+    [
+        KeyboardButton(text='Линейный'),
+        KeyboardButton(text='Перемешанный')
     ]
-)
+    ],resize_keyboard=True, one_time_keyboard=True)

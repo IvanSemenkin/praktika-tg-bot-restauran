@@ -6,3 +6,11 @@ class AI(StatesGroup):
     
 class Clear_db(StatesGroup):
     wait_clear = State()
+    
+class GetInfoID(StatesGroup):
+    id = State()
+    type_info = State()
+
+class DelInfoID(StatesGroup):
+    id = State()
+    wait_del = State()

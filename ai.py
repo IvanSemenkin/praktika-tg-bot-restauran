@@ -1,26 +1,35 @@
 import requests
-from src.storage.utils.logger import logger
+from langchain_community.document_loaders import TextLoader
+from langchain.text_splitter import CharacterTextSplitter
+from langchain_community.vectorstores import FAISS
+from langchain_huggingface import HuggingFaceEmbeddings
+from src.storage.utils.prompt import get_prompt
+
+loader = TextLoader("my-file.txt", encoding='utf-8')
+documents = loader.load()
+text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+docs = text_splitter.split_documents(documents)
+embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+db = FAISS.from_documents(docs, embeddings)
+
 
 def ai_qwen_langchain(mess, message, r):
-    global chat_history
-
     history_context = ''
     for i in range(1, 11):
         try:
-            history_context = history_context + f"user: {r.hget(f"chat_history:{message.from_user.id}:{i}", "user").decode()} \n\n" + f"assistant {r.hget(f"chat_history:{message.from_user.id}:{i}", "assistant").decode()} \n\n"
+            history_context += (
+                f"user: {r.hget(f'chat_history:{message.from_user.id}:{i}', 'user').decode()} \n"
+                f"assistant: {r.hget(f'chat_history:{message.from_user.id}:{i}', 'assistant').decode()} \n"
+            )
         except AttributeError:
             break
-        
 
-    prompt = (
-        "Ты помощник в ресторане. "
-        "Отвечай только на вопросы по теме еды, блюд, напитков, сервировки, кухни. "
-        "Если вопрос не по теме — отвечай: 'Извините, я могу отвечать только по теме еды и ресторана.'"
-        "Если есть хоть какой-то намек на еду, блюда, меню или что-то в этом роде - отвечай"
-        "Отвечай на русском языке.\n\n"
-        f"Вот история общения: {history_context}\n"
-        f"А сейчас ответь **только** на: {mess}"
-    )
+    rag_results = db.similarity_search(mess, k=3)
+    rag_context = ""
+    for doc in rag_results:
+        rag_context += doc.page_content + "\n"
+
+    prompt = get_prompt(history_context, rag_context, mess)
 
     response = requests.post(
         "http://localhost:11434/api/generate",
@@ -29,6 +38,4 @@ def ai_qwen_langchain(mess, message, r):
     )
 
     response.raise_for_status()
-    answer = response.json()["response"]
-
-    return answer.strip()
+    return response.json()["response"].strip()
