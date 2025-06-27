@@ -5,7 +5,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from src.storage.utils.prompt import get_prompt
 
-loader = TextLoader("my-file.txt", encoding='utf-8')
+loader = TextLoader("src/storage/utils/my-file.txt", encoding='utf-8')
 documents = loader.load()
 text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 docs = text_splitter.split_documents(documents)

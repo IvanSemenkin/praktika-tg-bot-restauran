@@ -14,3 +14,6 @@ class GetInfoID(StatesGroup):
 class DelInfoID(StatesGroup):
     id = State()
     wait_del = State()
+
+class DelMyInfo(StatesGroup):
+    wait_del = State()

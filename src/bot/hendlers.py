@@ -3,11 +3,11 @@ from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, CallbackQuery
 import src.bot.keyboards as kb
 from aiogram.fsm.context import FSMContext
-from src.bot.states import AI, Clear_db, GetInfoID, DelInfoID
+from src.bot.states import AI, Clear_db, GetInfoID, DelInfoID, DelMyInfo
 from src.storage.utils.logger import logger
 import redis
 import os
-from ai import ai_qwen_langchain
+from src.bot.ai import ai_qwen_langchain
 
 admin_id = 1126700956
 router = Router()
@@ -95,7 +95,7 @@ async def clear_w(message: Message, state: FSMContext):
         await message.answer('БД успешно очишена')
     elif message.text.lower() == 'нет':
         await message.answer('Очистка отменена')
-        state.clear()
+        await state.clear()
 
 
 @router.message(Command('get_all_key'))
@@ -221,6 +221,24 @@ async def get_info_id(message: Message, state: FSMContext):
         await state.clear()
         await message.answer('Не смог распознать, отмена')
 
+
+@router.message(Command("del_my_info"))
+async def help(message: Message, state: FSMContext):
+    await state.set_state(DelMyInfo.wait_del)
+    await message.answer('Вы уверены? (Да/Нет)')
+    
+
+@router.message(DelMyInfo.wait_del)
+async def clear_w(message: Message, state: FSMContext):
+    if message.text.lower() == 'да':
+        for i in range(1, 20): 
+            deleted_key = f"chat_history:{message.from_user.id}:{i}"
+            r.delete(deleted_key)
+        await state.clear()
+        await message.answer('Ваша история была очищена')
+    elif message.text.lower() == 'нет':
+        await message.answer('Очистка отменена')
+        await state.clear()
 
 
 
