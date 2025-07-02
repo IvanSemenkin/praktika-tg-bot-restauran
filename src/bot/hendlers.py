@@ -7,9 +7,10 @@ from src.bot.states import AI, Clear_db, GetInfoID, DelInfoID, DelMyInfo
 from src.storage.utils.logger import logger
 import redis
 import os
-from src.bot.ai import ai_qwen_langchain
+from src.bot.ai import ai_multiagent_handler
 from src.storage.utils.log_user_action import log_user_action
 
+# admin_id = os.getenv("ADMIN_ID")
 admin_id = 1126700956
 router = Router()
 r = redis.Redis(host="localhost", port="6380", db=0)
@@ -203,6 +204,7 @@ async def clear_w(message: Message, state: FSMContext):
         for i in range(1, 20): 
             deleted_key = f"chat_history:{message.from_user.id}:{i}"
             r.delete(deleted_key)
+        r.delete(f'{admin_id}_counter')
         await state.clear()
         await message.answer('Ваша история была очищена')
     elif message.text.lower() == 'нет':
@@ -232,7 +234,7 @@ async def ai_ask(message: Message, state: FSMContext):
         return
 
 
-    ans = ai_qwen_langchain(message.text, message, r)
+    ans = ai_multiagent_handler(message.text, message, r)
     
     us_count = r.incr(f"{message.from_user.id}_counter")
     
@@ -251,5 +253,3 @@ async def ai_ask(message: Message, state: FSMContext):
 async def send_inf(message: Message):
     await message.answer('Для того чтобы включить нейросеть напишите "ИИ", для вывода информации напишите /info')
     logger.info(log_user_action(message, 'Введена непонятная инфа'))
-
-

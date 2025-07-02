@@ -1,5 +1,6 @@
 from aiogram import Bot, Dispatcher
 from src.bot.hendlers import router
+from src.bot.ai import router1
 from src.storage.utils.logger import logger
 
 import asyncio
@@ -15,6 +16,7 @@ logger.info("Бот запущен")
 
 async def main():
     dp.include_router(router)
+    dp.include_router(router1)
     await dp.start_polling(bot)
 
 
