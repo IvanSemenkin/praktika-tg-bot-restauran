@@ -28,15 +28,16 @@ embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-
 db = FAISS.from_documents(docs, embeddings)
 
 def culinary(mess, context):
-    logger.info('culinary_func')
+    logger.info('culinary_func started')
     prompt = culinary_get_prompt(context, mess)
+    result = call_llm(prompt)
+    logger.info(f'culinary_func result: {result}')
+    return result
+
+def pairing(context, input):
+    logger.info('pairing_func')
+    prompt = pairing_get_prompt(context, input)
     return call_llm(prompt)
-
-# def pairing(context, input):
-#     logger.info('pairing_func')
-#     prompt = pairing_get_prompt(context, input)
-#     return call_llm(prompt)
-
 
 
 def call_llm(prompt):
@@ -72,11 +73,21 @@ def ai_multiagent_handler(mess, message, r):
     }
     
     tool = [
-        Tool(name="CulinaryAssistant", func=lambda x: culinary(mess, context), description="Помощь с выбором еды"),
+        Tool(name="CulinaryAssistant", func=lambda x: culinary(x, context), description="Помощь с выбором еды"),
         # Tool(name="PairingAdvisor", func=lambda x: pairing(x, context), description="Сочетание блюд и напитков"),
     ]
     
-    agent = initialize_agent(tools=tool, llm=OllamaLLM(model="llama3.1"), agent="zero-shot-react-description", verbose=False, max_iterations=1)
+    agent = initialize_agent(
+    tools=tool,
+    llm=OllamaLLM(model="llama3.1"),
+    agent="structured-chat-zero-shot-react-description",  
+    verbose=False,
+    max_iterations=2,  
+    agent_kwargs={
+        "prefix": "Ты — кулинарный помощник. Отвечай коротко и ясно, без JSON.",
+    },
+    early_stopping_method="generate",  
+    )
     logger.info('agent run')
     res = agent.invoke(mess)
     logger.info(f'Agent result: {res}')
