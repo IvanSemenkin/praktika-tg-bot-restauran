@@ -23,23 +23,30 @@ docs = text_splitter.split_documents(documents)
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 db = FAISS.from_documents(docs, embeddings)
 
-def ai_qwen_langchain(mess, message, history):
+def ai_qwen_langchain(mess, message, r):
+    history_context = ''
+    for i in range(1, 11):
+        try:
+            history_context += (
+                f"user: {r.hget(f'chat_history:{message.from_user.id}:{i}', 'user').decode()} \n"
+                f"assistant: {r.hget(f'chat_history:{message.from_user.id}:{i}', 'assistant').decode()} \n"
+            )
+        except AttributeError:
+            break
 
     rag_results = db.similarity_search(mess, k=3)
-    
-    rag_context = "Информация из базы знаний:\n"
+    rag_context = ""
     for doc in rag_results:
-        filename = os.path.basename(doc.metadata['source'])
-        rag_context += f"\n[Из файла {filename}]:\n{doc.page_content}\n"
+        rag_context += doc.page_content + "\n"
 
-    prompt = get_prompt(history, rag_context, mess)
+    prompt = get_prompt(history_context, rag_context, mess)
 
-    logger.info(log_user_action(message, f'Сообщение "{mess}" отправлена ИИ'))
     llm = OllamaLLM(
-        model="llama3.1",
-        base_url="http://localhost:11434",
+    model="llama3.1",
+    base_url="http://localhost:11434",
     )
+
     response = llm.invoke(prompt)
+    logger.info(log_user_action(message, f'Ответ от ИИ: "{response}"'))
     
-    logger.info(log_user_action(message, f'Инфармация от ИИ отправлена {response}'))
     return response

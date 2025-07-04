@@ -26,7 +26,9 @@ Telegram-бот с ИИ, который помогает выбирать еду
 
 ## Запуск
 
-1. Запустить Redis на 6380 порту.
-2. Запустить ollama`http://localhost:11434`.
+1. Запустить Redis на порту 6380.
+2. Запустить Ollama:
+   ```bash
+   ollama serve
 3. `pip install -r requirements.txt`
 4. `python main.py`

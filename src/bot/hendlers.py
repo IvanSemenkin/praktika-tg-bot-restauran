@@ -222,25 +222,30 @@ async def ai_start(message: Message, state: FSMContext):
 
 @router.message(AI.ask)
 async def ai_ask(message: Message, state: FSMContext):
-    text = message.text.strip().lower()
-
-    if text in {"хватит", "пока", "стоп"}:
-        await message.answer("Пока!")
+    if (
+        message.text.lower() == "хватит"
+        or message.text.lower() == "пока"
+        or message.text.lower() == "стоп"
+    ):
+        await message.answer("Пока")
         await state.clear()
         return
+
+    logger.info(log_user_action(message, f'Отправлено сообщение ИИ: "{message.text}"'))
+
+    ans = ai_qwen_langchain(message.text, message, r)
     
-    data = await state.get_data()
-    history = data.get("chat_history", [])
-    ans = ai_qwen_langchain(message.text, message, history)
-    history.append({"user": message.text, "assistant": ans})
-
-    if len(history) > 10:
-        history = history[-10:]
-        logger.info("counter_clear")
-
-    await state.update_data(chat_history=history)
-
-    await message.answer(ans)
+    
+    us_count = r.incr(f"{message.from_user.id}_counter")
+    
+    
+    if int(us_count) >= 10:
+        r.set(f"{message.from_user.id}_counter", 0)
+        logger.info('counter_clear')
+    
+    r.hset(f"chat_history:{message.from_user.id}:{us_count}", mapping={"user":message.text, "assistant":ans})
+    
+    await message.answer(ans) 
 
 
 
