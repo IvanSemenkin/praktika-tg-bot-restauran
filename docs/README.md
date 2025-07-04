@@ -24,11 +24,79 @@ Telegram-бот с ИИ, который помогает выбирать еду
 * LangChain + FAISS
 * LLaMA 3.1 (через localhost)
 
+## Структура проекта
+
+```bash
+food-combo-bot/
+│
+├── main.py
+├── docs/
+│   ├── pyproject.toml
+│   └── README.md
+├── knowledge_base/
+│   ├── cuisine/
+│   ├── dishes/
+│   ├── meal_time/
+│   ├── situation/
+│   ├── taste/
+│   └── weather/
+├── src/
+│   ├── bot/
+│   │   ├── ai.py
+│   │   ├── handlers.py
+│   │   ├── hendlers.py
+│   │   ├── keyboards.py
+│   │   └── states.py
+│   └── storage/
+│       ├── utils/
+│       │   ├── log_user_action.py
+│       │   ├── logger.py
+│       │   └── prompt.py
+```
+
+
 ## Запуск
 
-1. Запустить Redis на порту 6380.
-2. Запустить Ollama:
-   ```bash
-   ollama serve
-3. `pip install -r requirements.txt`
-4. `python main.py`
+#### 1. Запустить Redis
+
+```bash
+redis-cli 
+```
+
+#### 2. Запустить Ollama
+
+```bash
+ollama serve
+```
+
+#### 3. Установить зависимости
+
+```bash
+pip install -r requirements.txt
+```
+
+#### 4. Настроить переменные окружения
+
+Создайте файл `.env` в корне проекта и добавьте следующие строки:
+
+```env
+TOKEN=ваш_токен_бота_telegram
+BASE_URL=url_для_запросов_ии
+LOG_LEVEL=DEBUG
+REDIS_HOST=localhost
+REDIS_PORT=ваш_порт_redis'а
+```
+
+#### 5. Запустить бота
+
+```bash
+python main.py
+```
+
+
+## Автор
+
+**Иван Семенкин**  
+[isemenkin@gmail.com](mailto:isemenkin@gmail.com)
+
+[GitHub](https://github.com/IvanSemenkin)
