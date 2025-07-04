@@ -7,6 +7,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from src.storage.utils.prompt import get_prompt
 from src.storage.utils.logger import logger
 from src.storage.utils.log_user_action import log_user_action
+from langchain_ollama import OllamaLLM
 
 loader = DirectoryLoader(
     "knowledge_base/",
@@ -22,16 +23,7 @@ docs = text_splitter.split_documents(documents)
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 db = FAISS.from_documents(docs, embeddings)
 
-def ai_qwen_langchain(mess, message, r):
-    history_context = ''
-    for i in range(1, 11):
-        try:
-            history_context += (
-                f"user: {r.hget(f'chat_history:{message.from_user.id}:{i}', 'user').decode()} \n"
-                f"assistant: {r.hget(f'chat_history:{message.from_user.id}:{i}', 'assistant').decode()} \n"
-            )
-        except AttributeError:
-            break
+def ai_qwen_langchain(mess, message, history):
 
     rag_results = db.similarity_search(mess, k=3)
     
@@ -40,14 +32,14 @@ def ai_qwen_langchain(mess, message, r):
         filename = os.path.basename(doc.metadata['source'])
         rag_context += f"\n[Из файла {filename}]:\n{doc.page_content}\n"
 
-    prompt = get_prompt(history_context, rag_context, mess)
+    prompt = get_prompt(history, rag_context, mess)
 
     logger.info(log_user_action(message, f'Сообщение "{mess}" отправлена ИИ'))
-    response = requests.post(
-        "http://localhost:11434/api/generate",
-        headers={"Content-Type": "application/json"},
-        json={"model": "llama3.1", "prompt": prompt, "stream": False},
+    llm = OllamaLLM(
+        model="llama3.1",
+        base_url="http://localhost:11434",
     )
+    response = llm.invoke(prompt)
     
-    logger.info(log_user_action(message, f'Инфармация от ИИ отправлена {response.json()["response"].strip()}'))
-    return response.json()["response"].strip()
+    logger.info(log_user_action(message, f'Инфармация от ИИ отправлена {response}'))
+    return response

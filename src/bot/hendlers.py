@@ -8,6 +8,7 @@ from src.storage.utils.logger import logger
 import redis
 import os
 from src.bot.ai import ai_qwen_langchain
+from src.storage.utils.log_user_action import log_user_action
 
 admin_id = 1126700956
 router = Router()
@@ -16,11 +17,13 @@ r = redis.Redis(host="localhost", port="6380", db=0)
 
 @router.message(CommandStart())
 async def start(message: Message):
+    logger.info(log_user_action(message, 'Старт'))
     await message.answer(f"Привет, {message.from_user.first_name} , твой id: {message.from_user.id}", reply_markup=kb.main)
 
 
 @router.message(Command("info"))
 async def help(message: Message):
+    logger.info(log_user_action(message, 'Выведена инфармация'))
     user = ''
     ai = ''
     found = False
@@ -43,40 +46,6 @@ async def help(message: Message):
         await message.answer(f"User: \n{user}")
         await message.answer(f"AI: \n{ai}")
 
-
-
-@router.message(F.text.lower() == "ии")
-async def ai_start(message: Message, state: FSMContext):
-    await state.set_state(AI.ask)
-    await message.answer(
-        'Что бы вы хотели спросить? ИИ ответит только на вопросы по еде. Для завершения напишите "Пока", "Хватит", "Стоп"'
-    )
-
-
-@router.message(AI.ask)
-async def ai_ask(message: Message, state: FSMContext):
-    if (
-        message.text.lower() == "хватит"
-        or message.text.lower() == "пока"
-        or message.text.lower() == "стоп"
-    ):
-        await message.answer("Пока")
-        await state.clear()
-        return
-
-
-    ans = ai_qwen_langchain(message.text, message, r)
-    
-    us_count = r.incr(f"{message.from_user.id}_counter")
-    
-    
-    if int(us_count) >= 10:
-        r.set(f"{message.from_user.id}_counter", 0)
-        logger.info('counter_clear')
-    
-    r.hset(f"chat_history:{message.from_user.id}:{us_count}", mapping={"user":message.text, "assistant":ans})
-    
-    await message.answer(ans)
 
 @router.message(Command("cls"))
 async def help(message: Message, state: FSMContext):
@@ -242,10 +211,43 @@ async def clear_w(message: Message, state: FSMContext):
 
 
 
+@router.message(F.text.lower() == "ии")
+async def ai_start(message: Message, state: FSMContext):
+    logger.info(log_user_action(message, 'Запущен ИИ'))
+    await state.set_state(AI.ask)
+    await message.answer(
+        'Что бы вы хотели спросить? ИИ ответит только на вопросы по еде. Для завершения напишите "Пока", "Хватит", "Стоп"'
+    )
+
+
+@router.message(AI.ask)
+async def ai_ask(message: Message, state: FSMContext):
+    text = message.text.strip().lower()
+
+    if text in {"хватит", "пока", "стоп"}:
+        await message.answer("Пока!")
+        await state.clear()
+        return
+    
+    data = await state.get_data()
+    history = data.get("chat_history", [])
+    ans = ai_qwen_langchain(message.text, message, history)
+    history.append({"user": message.text, "assistant": ans})
+
+    if len(history) > 10:
+        history = history[-10:]
+        logger.info("counter_clear")
+
+    await state.update_data(chat_history=history)
+
+    await message.answer(ans)
+
+
+
 
 @router.message(F.text != '')
 async def send_inf(message: Message):
     await message.answer('Для того чтобы включить нейросеть напишите "ИИ", для вывода информации напишите /info')
-    logger.info('send_info_for_start')
+    logger.info(log_user_action(message, 'Введена непонятная инфа'))
 
 
