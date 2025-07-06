@@ -1,0 +1,5 @@
+.venv/
+__pycache__/
+.gitignore
+scr/bot/__pycache__/
+scr/storage/utils/__pycache__/

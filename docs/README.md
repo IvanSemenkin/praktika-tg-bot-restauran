@@ -23,6 +23,7 @@ Telegram-бот с ИИ, который помогает выбирать еду
 * Redis + aiogram-fsm-storage-redis
 * LangChain + FAISS
 * LLaMA 3.1 (через localhost)
+* Асинхронный фреймворк для создания Telegram ботов.
 
 ## Структура проекта
 

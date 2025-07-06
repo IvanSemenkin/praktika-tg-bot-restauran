@@ -1,5 +1,3 @@
-import os
-import requests
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.vectorstores import FAISS
@@ -8,6 +6,7 @@ from src.storage.utils.prompt import get_prompt
 from src.storage.utils.logger import logger
 from src.storage.utils.log_user_action import log_user_action
 from langchain_ollama import OllamaLLM
+from groq import Groq
 
 loader = DirectoryLoader(
     "knowledge_base/",
@@ -41,12 +40,36 @@ def ai_qwen_langchain(mess, message, r):
 
     prompt = get_prompt(history_context, rag_context, mess)
 
-    llm = OllamaLLM(
-    model="llama3.1",
-    base_url="http://localhost:11434",
+    # llm = OllamaLLM(
+    # model="llama3.1",
+    # base_url="http://localhost:11434",
+    # keep_alive='5m',
+    # temperature=0.4,
+    # num_ctx=2048,
+    # num_gpu=50,
+    # )
+
+    client = Groq()
+
+    completion = client.chat.completions.create(
+        model="gemma2-9b-it",
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=0.4,
+        max_completion_tokens=1024,
+        top_p=1,
+        stream=False, 
+        stop=None,
     )
 
-    response = llm.invoke(prompt)
+
+    # response = llm.invoke(prompt)
+    
+    response = completion.choices[0].message.content.strip()
     logger.info(log_user_action(message, f'Ответ от ИИ: "{response}"'))
     
     return response
