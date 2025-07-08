@@ -62,6 +62,7 @@ def ai_qwen_langchain(mess, message, r):
         temperature=0.4,
         max_completion_tokens=1024,
         top_p=1,
+        max_tokens=512,
         stream=False, 
         stop=None,
     )

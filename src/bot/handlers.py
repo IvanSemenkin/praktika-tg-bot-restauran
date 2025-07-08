@@ -33,8 +33,8 @@ async def help(message: Message):
             key = f"chat_history:{message.from_user.id}:{i}"
             if not r.exists(key):
                 break  
-            user = user + f"{i}. {r.hget(key, "user").decode()} \n\n"
-            ai = ai + f"{i}. {r.hget(key, "assistant").decode()} \n\n"
+            user = user + f"{i}. {r.hget(key, 'user').decode()} \n\n"
+            ai = ai + f"{i}. {r.hget(key, 'assistant').decode()} \n\n"
         except AttributeError:
             break
     if user or ai:
