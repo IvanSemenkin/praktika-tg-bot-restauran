@@ -12,7 +12,7 @@ from src.storage.utils.log_user_action import log_user_action
 
 admin_id = 1126700956
 router = Router()
-r = redis.Redis(host="localhost", port="6380", db=0)
+r = redis.Redis(host="localhost", port=6380, db=0)
 
 
 @router.message(CommandStart())
