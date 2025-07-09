@@ -6,6 +6,9 @@ from src.storage.utils.prompt import get_prompt
 from src.storage.utils.logger import logger
 from src.storage.utils.log_user_action import log_user_action
 from langchain_ollama import OllamaLLM
+from langchain_groq import ChatGroq
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 from groq import Groq
 
 loader = DirectoryLoader(
@@ -14,6 +17,15 @@ loader = DirectoryLoader(
     loader_cls=TextLoader,
     loader_kwargs={'encoding': 'utf-8'}
 )
+
+
+llm = ChatGroq(
+    model_name="gemma2-9b-it",
+    temperature=0.4
+)
+
+parser = StrOutputParser()
+
 documents = loader.load()
 
 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
@@ -21,6 +33,13 @@ docs = text_splitter.split_documents(documents)
 
 embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 db = FAISS.from_documents(docs, embeddings)
+
+
+def build_chain(prompt_text):
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", prompt_text)
+    ])
+    return prompt | llm | parser
 
 def ai_qwen_langchain(mess, message, r):
     history_context = ''
@@ -38,39 +57,12 @@ def ai_qwen_langchain(mess, message, r):
     for doc in rag_results:
         rag_context += doc.page_content + "\n"
 
-    prompt = get_prompt(history_context, rag_context, mess)
-
-    # llm = OllamaLLM(
-    # model="llama3.1",
-    # base_url="http://localhost:11434",
-    # keep_alive='5m',
-    # temperature=0.4,
-    # num_ctx=2048,
-    # num_gpu=50,
-    # )
-
-    client = Groq()
-
-    completion = client.chat.completions.create(
-        model="gemma2-9b-it",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        temperature=0.4,
-        max_completion_tokens=1024,
-        top_p=1,
-        max_tokens=512,
-        stream=False, 
-        stop=None,
-    )
+    prompt_text = get_prompt(history_context, rag_context, mess)
 
 
-    # response = llm.invoke(prompt)
-    
-    response = completion.choices[0].message.content.strip()
+    chain = build_chain(prompt_text)
+    response = chain.invoke({})
+
+
     logger.info(log_user_action(message, f'Ответ от ИИ: "{response}"'))
-    
     return response
