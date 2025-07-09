@@ -5,11 +5,9 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from src.storage.utils.prompt import get_prompt
 from src.storage.utils.logger import logger
 from src.storage.utils.log_user_action import log_user_action
-from langchain_ollama import OllamaLLM
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from groq import Groq
 
 loader = DirectoryLoader(
     "knowledge_base/",
@@ -41,16 +39,7 @@ def build_chain(prompt_text):
     ])
     return prompt | llm | parser
 
-def ai_qwen_langchain(mess, message, r):
-    history_context = ''
-    for i in range(1, 11):
-        try:
-            history_context += (
-                f"user: {r.hget(f'chat_history:{message.from_user.id}:{i}', 'user').decode()} \n"
-                f"assistant: {r.hget(f'chat_history:{message.from_user.id}:{i}', 'assistant').decode()} \n"
-            )
-        except AttributeError:
-            break
+def ai_qwen_langchain(mess, message, history_context):
 
     rag_results = db.similarity_search(mess, k=3)
     rag_context = ""

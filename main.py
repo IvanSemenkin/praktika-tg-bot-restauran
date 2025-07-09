@@ -6,11 +6,13 @@ import subprocess
 import asyncio
 from dotenv import load_dotenv
 from time import sleep
+from aiogram.fsm.storage.redis import RedisStorage
 import os
 
 load_dotenv()
 bot = Bot(token=os.getenv("TOKEN"))
-dp = Dispatcher()
+storage = RedisStorage.from_url('redis://localhost:6380/0')
+dp = Dispatcher(storage=storage)
 
 logger.info("Бот запущен")
 
