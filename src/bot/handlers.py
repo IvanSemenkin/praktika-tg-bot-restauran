@@ -53,8 +53,8 @@ async def ai_ask(message: Message, state: FSMContext):
         {"role": "assistant", "content": ans}
     ])
     
-    if len(history) > 20:
-        history = history[-20:]
+    # if len(history) > 20:
+    #     history = history[-20:]
     
     await state.update_data(history=history)
     

@@ -8,10 +8,12 @@ from dotenv import load_dotenv
 from time import sleep
 from aiogram.fsm.storage.redis import RedisStorage
 import os
+from src.storage.utils.config import get_token
+from src.storage.utils.config import get_redis_host, get_redis_port, get_redis_db
 
 load_dotenv()
-bot = Bot(token=os.getenv("TOKEN"))
-storage = RedisStorage.from_url('redis://localhost:6380/0')
+bot = Bot(token=get_token())
+storage = RedisStorage.from_url(f'redis://{get_redis_host()}:{get_redis_port()}/{get_redis_db()}')
 dp = Dispatcher(storage=storage)
 
 logger.info("Бот запущен")
