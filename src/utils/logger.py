@@ -2,7 +2,7 @@ import logging
 import os
 from src.utils.config import get_log_level
 
-LOG_LEVEL = get_log_level().upper()
+LOG_LEVEL = "INFO"
 
 logging.basicConfig(
     level=LOG_LEVEL,
