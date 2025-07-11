@@ -1,6 +1,6 @@
 import logging
 import os
-from src.storage.utils.config import get_log_level
+from src.utils.config import get_log_level
 
 LOG_LEVEL = get_log_level().upper()
 

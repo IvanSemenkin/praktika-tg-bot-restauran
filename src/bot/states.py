@@ -2,6 +2,7 @@ from aiogram.fsm.state import State, StatesGroup
 
 
 class AI(StatesGroup):
+    wait_btn = State()
     ask = State()
     
 class Clear_db(StatesGroup):

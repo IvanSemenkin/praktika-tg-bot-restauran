@@ -12,14 +12,12 @@ main = ReplyKeyboardMarkup(
     resize_keyboard=True, one_time_keyboard=True
 )
 
-catalog = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            InlineKeyboardButton(text="Майка", callback_data="t-shirt"),
-            InlineKeyboardButton(text="Кепка", callback_data="Cap"),
-        ]
+ai_keyboard = ReplyKeyboardMarkup(keyboard=[
+    [
+        KeyboardButton(text='Сочитаемость блюд'),
+        KeyboardButton(text='Выбор блюд')
     ]
-)
+    ],resize_keyboard=True, one_time_keyboard=True)
 
 
 type_mess = ReplyKeyboardMarkup(keyboard=[

@@ -2,9 +2,9 @@ from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
-from src.storage.utils.prompt import get_prompt
-from src.storage.utils.logger import logger
-from src.storage.utils.log_user_action import log_user_action
+from src.utils.prompt import get_prompt, get_compatibility_prompt
+from src.utils.logger import logger
+from src.utils.log_user_action import log_user_action_formatter
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -39,19 +39,22 @@ def build_chain(prompt_text):
     ])
     return prompt | llm | parser
 
-def ai_qwen_langchain(mess, message, history_context):
+def ai_qwen_langchain(mess, message, history_context, wait_btn):
 
     rag_results = db.similarity_search(mess, k=3)
     rag_context = ""
     for doc in rag_results:
         rag_context += doc.page_content + "\n"
-
-    prompt_text = get_prompt(history_context, rag_context, mess)
+    
+    if wait_btn == "сочетаемость блюд":
+        prompt_text = get_compatibility_prompt(history_context, rag_context, mess)
+    elif wait_btn == "выбор блюд":
+        prompt_text = get_prompt(history_context, rag_context, mess)
 
 
     chain = build_chain(prompt_text)
     response = chain.invoke({})
 
 
-    logger.info(log_user_action(message, f'Ответ от ИИ: "{response}"'))
+    logger.info(log_user_action_formatter(message, f'Ответ от ИИ: "{response}"'))
     return response

@@ -1,15 +1,15 @@
 from aiogram import Bot, Dispatcher
 from src.bot.handlers import router
 import redis    
-from src.storage.utils.logger import logger
+from src.utils.logger import logger
 import subprocess
 import asyncio
 from dotenv import load_dotenv
 from time import sleep
 from aiogram.fsm.storage.redis import RedisStorage
 import os
-from src.storage.utils.config import get_token
-from src.storage.utils.config import get_redis_host, get_redis_port, get_redis_db
+from src.utils.config import get_token
+from src.utils.config import get_redis_host, get_redis_port, get_redis_db
 
 load_dotenv()
 bot = Bot(token=get_token())
