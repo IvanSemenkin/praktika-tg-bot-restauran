@@ -19,7 +19,8 @@ loader = DirectoryLoader(
 
 llm = ChatGroq(
     model_name="gemma2-9b-it",
-    temperature=0.4
+    temperature=0.4,
+    api_key='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'
 )
 
 parser = StrOutputParser()
