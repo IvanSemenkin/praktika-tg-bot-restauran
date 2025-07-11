@@ -81,7 +81,7 @@ async def ai_ask(message: Message, state: FSMContext):
         await message.answer(ans, parse_mode="MarkdownV2")
     except:
         clean_text = ans.replace("*", "").replace("_", "").replace("`", "")
-        await message.answer(f"⚠️ Ошибка форматирования:\n{clean_text}")
+        await message.answer(clean_text)
 
 
 
