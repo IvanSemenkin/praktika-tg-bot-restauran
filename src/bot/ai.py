@@ -8,6 +8,7 @@ from src.utils.log_user_action import log_user_action_formatter
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+from src.utils.config import get_api_groq
 
 loader = DirectoryLoader(
     "knowledge_base/",
@@ -20,7 +21,7 @@ loader = DirectoryLoader(
 llm = ChatGroq(
     model_name="gemma2-9b-it",
     temperature=0.4,
-    api_key='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'
+    api_key=get_api_groq(),
 )
 
 parser = StrOutputParser()

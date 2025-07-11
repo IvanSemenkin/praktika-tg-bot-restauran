@@ -24,3 +24,6 @@ def get_redis_port() -> int:
 
 def get_redis_db() -> int:
     return int(os.getenv("REDIS_DB"))
+
+def get_api_groq() -> str:
+    return int(os.getenv("GROQ_API_KEY"))
