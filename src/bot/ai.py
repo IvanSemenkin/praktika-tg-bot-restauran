@@ -26,13 +26,13 @@ def build_chain(prompt_text):
     return prompt | llm | parser
 
 def ai_qwen_langchain(mess, message, history_context, wait_btn):
-    if wait_btn == "мировые кухни":
+    if wait_btn == "выбор блюд":
         rag_results = db_food.similarity_search(mess, k=3)
         rag_context = ""
         for doc in rag_results:
             rag_context += doc.page_content + "\n"
         prompt_text = get_prompt(history_context, rag_context, mess)
-    elif wait_btn == "выбор блюд":
+    elif wait_btn == "мировые кухни":
         rag_results = db_food_w.similarity_search(mess, k=3)
         rag_context = ""
         for doc in rag_results:
