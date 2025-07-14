@@ -9,6 +9,7 @@ from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from src.utils.config import get_groq_key
+from src.utils.get_rag import get_rag
 
 loader_food = DirectoryLoader(
     "knowledge_base_food/",
@@ -52,20 +53,7 @@ def build_chain(prompt_text):
 
 def ai_qwen_langchain(mess, message, history_context, wait_btn):
     
-    if wait_btn == "выбор блюд":
-        rag_results = db_food.similarity_search(mess, k=3)
-        rag_context = ""
-        for doc in rag_results:
-            rag_context += doc.page_content + "\n"
-        prompt_text = get_prompt(history_context, rag_context, mess)
-    
-    elif wait_btn == "мировые кухни":
-        rag_results = db_wolrd.similarity_search(mess, k=1)
-        rag_context = ""
-        for doc in rag_results:
-            rag_context += doc.page_content + "\n"
-        prompt_text = get_cuisine_info_prompt(history_context, rag_context, mess)
-            
+    prompt_text = get_rag(wait_btn, mess, history_context)
 
     chain = build_chain(prompt_text)
     response = chain.invoke({})
