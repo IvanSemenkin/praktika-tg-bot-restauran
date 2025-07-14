@@ -25,36 +25,6 @@ Telegram-бот с ИИ, который помогает выбирать еду
 * LLaMA 3.1 (через localhost)
 * Асинхронный фреймворк для создания Telegram ботов.
 
-## Структура проекта
-
-```bash
-food-combo-bot/
-│
-├── main.py
-├── docs/
-│   ├── pyproject.toml
-│   └── README.md
-├── knowledge_base/
-│   ├── cuisine/
-│   ├── dishes/
-│   ├── meal_time/
-│   ├── situation/
-│   ├── taste/
-│   └── weather/
-├── src/
-│   ├── bot/
-│   │   ├── ai.py
-│   │   ├── handlers.py
-│   │   ├── hendlers.py
-│   │   ├── keyboards.py
-│   │   └── states.py
-│   └── storage/
-│       ├── utils/
-│       │   ├── log_user_action.py
-│       │   ├── logger.py
-│       │   └── prompt.py
-```
-
 
 ## Как работает бот (пример полного цикла)
 
@@ -140,12 +110,12 @@ food-combo-bot/
 ```
 ![Схема полного цикла](/docs/img/Безымянный-2025-07-05-2026.png)
 
-## Запуск
 
+## Запуск
 
 ### Запуск через Docker
 
-#### 0. Утановка env переменных, перейдите в файл .env и подставте свои значания
+#### 0. Утановка env переменных, создайте в файл .env и подставте свои значания
 
 
 #### 1. Перейти в папку с проектом и выполнить комманду:
@@ -157,6 +127,20 @@ docker build -t my_project .
 ```bash
 docker run my_project
 ```
+### Запуск через python
+
+#### 1. Склонируйте репозиторий 
+```bash
+git clone -b not_multiag https://github.com/IvanSemenkin/praktika-tg-bot-restauran.git
+```
+#### 2. Установите зависимости 
+```bash
+pip install .
+```
+#### 3. Запустите проект
+```bash
+python main.py
+```
 
 ## Автор
 
@@ -165,3 +149,38 @@ docker run my_project
 
 [GitHub](https://github.com/IvanSemenkin)
 
+
+
+
+
+
+
+## Структура проекта
+
+```bash
+food-combo-bot/
+│
+├── main.py
+├── docs/
+│   ├── pyproject.toml
+│   └── README.md
+├── knowledge_base/
+│   ├── cuisine/
+│   ├── dishes/
+│   ├── meal_time/
+│   ├── situation/
+│   ├── taste/
+│   └── weather/
+├── src/
+│   ├── bot/
+│   │   ├── ai.py
+│   │   ├── handlers.py
+│   │   ├── hendlers.py
+│   │   ├── keyboards.py
+│   │   └── states.py
+│   └── storage/
+│       ├── utils/
+│       │   ├── log_user_action.py
+│       │   ├── logger.py
+│       │   └── prompt.py
+```
