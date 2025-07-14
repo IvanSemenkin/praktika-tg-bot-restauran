@@ -1,16 +1,12 @@
-from langchain_community.document_loaders import DirectoryLoader, TextLoader
-from langchain.text_splitter import CharacterTextSplitter
-from langchain_community.vectorstores import FAISS
-from langchain_huggingface import HuggingFaceEmbeddings
-from src.utils.prompt import get_prompt, get_cuisine_info_prompt
 from src.utils.logger import logger
 from src.utils.log_user_action import log_user_action_formatter
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from src.utils.config import get_groq_key
 from src.utils.get_rag import get_rag
+from src.utils.prompt import get_prompt, get_cuisine_info_prompt
 
+db_food_w, db_food = get_rag()
 
 llm = ChatGroq(
     model_name="gemma2-9b-it",
@@ -18,7 +14,6 @@ llm = ChatGroq(
 )
 
 parser = StrOutputParser()
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
 
 def build_chain(prompt_text):
@@ -28,12 +23,21 @@ def build_chain(prompt_text):
     return prompt | llm | parser
 
 def ai_qwen_langchain(mess, message, history_context, wait_btn):
-    
-    prompt_text = get_rag(wait_btn, mess, history_context, embeddings)
+    if wait_btn == "мировые кухни":
+        rag_results = db_food.similarity_search(mess, k=3)
+        rag_context = ""
+        for doc in rag_results:
+            rag_context += doc.page_content + "\n"
+        prompt_text = get_prompt(history_context, rag_context, mess)
+    elif wait_btn == "выбор блюд":
+        rag_results = db_food_w.similarity_search(mess, k=3)
+        rag_context = ""
+        for doc in rag_results:
+            rag_context += doc.page_content + "\n"
+        prompt_text = get_prompt(history_context, rag_context, mess)
 
     chain = build_chain(prompt_text)
     response = chain.invoke({})
-
 
     logger.info(log_user_action_formatter(message, f'Ответ от ИИ: "{response}"'))
     return response
