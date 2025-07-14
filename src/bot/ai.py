@@ -5,7 +5,10 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from src.utils.get_rag import get_rag
 from src.utils.prompt import get_prompt, get_cuisine_info_prompt
+import os
 
+
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 db_food_w, db_food = get_rag()
 
 llm = ChatGroq(
