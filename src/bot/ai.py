@@ -37,7 +37,7 @@ def ai_qwen_langchain(mess, message, history_context, wait_btn):
         rag_context = ""
         for doc in rag_results:
             rag_context += doc.page_content + "\n"
-        prompt_text = get_prompt(history_context, rag_context, mess)
+        prompt_text = get_cuisine_info_prompt(history_context, rag_context, mess)
 
     chain = build_chain(prompt_text)
     response = chain.invoke({})
