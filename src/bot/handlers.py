@@ -31,9 +31,9 @@ async def ai_start(message: Message, state: FSMContext):
 
 @router.message(AI.wait_btn)
 async def wait_btn(message: Message, state: FSMContext):
-    if message.text.lower() == "сочитаемость блюд":
-        await state.update_data(wait_btn="сочетаемость блюд")
-        logger.info(log_user_action_formatter(message, 'Выбрана сочетаемость блюд'))
+    if message.text.lower() == "мировые кухни":
+        await state.update_data(wait_btn="мировые кухни")
+        logger.info(log_user_action_formatter(message, 'Выбрана мировая кухня'))
         text = 'Что бы вы хотели спросить по сочетаемости блюд? ИИ ответит только на вопросы по еде. Для завершения напишите "Пока", "Хватит", "Стоп"'
     elif message.text.lower() == "выбор блюд":
         await state.update_data(wait_btn="выбор блюд")

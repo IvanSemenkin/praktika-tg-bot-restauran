@@ -155,32 +155,3 @@ python main.py
 
 
 
-## Структура проекта
-
-```bash
-food-combo-bot/
-│
-├── main.py
-├── docs/
-│   ├── pyproject.toml
-│   └── README.md
-├── knowledge_base/
-│   ├── cuisine/
-│   ├── dishes/
-│   ├── meal_time/
-│   ├── situation/
-│   ├── taste/
-│   └── weather/
-├── src/
-│   ├── bot/
-│   │   ├── ai.py
-│   │   ├── handlers.py
-│   │   ├── hendlers.py
-│   │   ├── keyboards.py
-│   │   └── states.py
-│   └── storage/
-│       ├── utils/
-│       │   ├── log_user_action.py
-│       │   ├── logger.py
-│       │   └── prompt.py
-```

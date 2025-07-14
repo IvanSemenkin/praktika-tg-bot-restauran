@@ -14,7 +14,7 @@ main = ReplyKeyboardMarkup(
 
 ai_keyboard = ReplyKeyboardMarkup(keyboard=[
     [
-        KeyboardButton(text='Сочитаемость блюд'),
+        KeyboardButton(text='Мировые кухни'),
         KeyboardButton(text='Выбор блюд')
     ]
     ],resize_keyboard=True, one_time_keyboard=True)
