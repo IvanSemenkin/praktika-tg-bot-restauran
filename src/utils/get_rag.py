@@ -4,9 +4,9 @@ from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from src.utils.prompt import get_prompt, get_cuisine_info_prompt
 
-def get_rag(wait_btn, mess, history_context):
+def get_rag(wait_btn, mess, history_context, embeddings):
     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    
     if wait_btn == "выбор блюд":
         loader_food = DirectoryLoader(
             "knowledge_base_food/",
@@ -24,6 +24,7 @@ def get_rag(wait_btn, mess, history_context):
         rag_context = ""
         for doc in rag_results:
             rag_context += doc.page_content + "\n"
+            
         prompt_text = get_prompt(history_context, rag_context, mess)
     elif wait_btn == "мировые кухни":
         loader_food = DirectoryLoader(
@@ -43,5 +44,6 @@ def get_rag(wait_btn, mess, history_context):
         for doc in rag_results:
             rag_context += doc.page_content + "\n"
         prompt_text = get_cuisine_info_prompt(history_context, rag_context, mess)
+        
         return prompt_text
     
