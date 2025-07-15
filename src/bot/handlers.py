@@ -80,7 +80,7 @@ async def ai_ask(message: Message, state: FSMContext):
     try:
         await message.answer(ans, parse_mode="Markdown")
     except:
-        # clean_text = ans.replace("*", "").replace("_", "").replace("`", "")
+        clean_text = ans.replace("*", "").replace("_", "").replace("`", "")
         await message.answer(clean_text)
 
 
