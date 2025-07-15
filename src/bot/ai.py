@@ -33,7 +33,7 @@ def ai_qwen_langchain(mess, message, history_context, wait_btn):
             rag_context += doc.page_content + "\n"
         prompt_text = get_prompt(history_context, rag_context, mess)
     elif wait_btn == "мировые кухни":
-        rag_results = db_food_w.similarity_search(mess, k=10)
+        rag_results = db_food_w.similarity_search(mess, k=3)
         rag_context = ""
         for doc in rag_results:
             rag_context += doc.page_content + "\n"
