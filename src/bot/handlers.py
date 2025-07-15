@@ -17,7 +17,7 @@ router = Router()
 @router.message(CommandStart())
 async def start(message: Message):
     logger.info(log_user_action_formatter(message, 'Старт'))
-    await message.answer(f"Привет, {message.from_user.first_name} , твой id: {message.from_user.id}", reply_markup=kb.main)
+    await message.answer(f"Привет, {message.from_user.first_name}", reply_markup=kb.main)
 
 
 @router.message(F.text.lower() == "ии")
@@ -25,7 +25,7 @@ async def ai_start(message: Message, state: FSMContext):
     logger.info(log_user_action_formatter(message, 'Запущен ИИ'))
     await state.set_state(AI.wait_btn)
     await message.answer(
-        'Выберете у ваш тип запроса:', 
+        'Выберете ваш тип запроса:', 
         reply_markup=kb.ai_keyboard)
 
 
