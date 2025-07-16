@@ -9,6 +9,7 @@ from src.bot.ai import ai_qwen_langchain
 from src.utils.log_user_action import log_user_action_formatter
 from src.utils.format_history_for_ai import format_history_for_ai
 from aiogram.fsm.context import FSMContext
+import asyncio
 
 admin_id = 1126700956
 router = Router()
@@ -64,7 +65,9 @@ async def ai_ask(message: Message, state: FSMContext):
     wait_btn = data.get("wait_btn")
     
     history_context = format_history_for_ai(history)
-    ans = ai_qwen_langchain(message.text, message, history_context, wait_btn)
+    ans = await asyncio.to_thread(
+    ai_qwen_langchain, message.text, message, history_context, wait_btn
+    )
     
     history.extend([
         {"role": "user", "content": message.text},
