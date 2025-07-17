@@ -1,0 +1,21 @@
+**/__pycache__/
+.venv/
+venv/
+.env
+src/bot/__pycache__/
+src/storage/utils/__pycache__/
+backup.py
+
+
+i4-lts:~/praktika-tg-bot-restauran# ls
+docs                 knowledge_base_world_cuisine  output.log   pyproject.toml  src
+knowledge_base_food  main.py                       __pycache__  README.md       venv
+root@orangepi4-lts:~/praktika-tg-bot-restauran# ls .git
+.git/       .gitignore  
+root@orangepi4-lts:~/praktika-tg-bot-restauran# ls .git
+.git/       .gitignore  
+root@orangepi4-lts:~/praktika-tg-bot-restauran# ls .git
+.git/       .gitignore  
+root@orangepi4-lts:~/praktika-tg-bot-restauran# ls .git
+branches        config       FETCH_HEAD  HEAD   index  logs     ORIG_HEAD    refs
+COMMIT_EDITMSG  description  gc.log      hooks  info   objects  packed-refs

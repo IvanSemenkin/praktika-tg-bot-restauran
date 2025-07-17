@@ -10,13 +10,6 @@ load_dotenv(dotenv_path=ENV_PATH)
 
 settings = Settings()
 
-logger.info(f"token1: {settings.token}")
-logger.info(f"redis_db: {settings.redis_db}")
-logger.info(f"redis_host: {settings.redis_host}")
-logger.info(f"redis_port: {settings.redis_port}")
-logger.info(f"groq_api_key: {settings.groq_api_key}")
-logger.info(f"log_level: {settings.log_level}")
-
 bot = Bot(token=settings.token)
 
 storage = RedisStorage.from_url(f'redis://{settings.redis_host}:{settings.redis_port}/{settings.redis_db}')
