@@ -2,8 +2,12 @@ from aiogram import Bot, Dispatcher
 from src.bot.handlers import router 
 from src.utils.logger import logger
 import asyncio
+from dotenv import load_dotenv
+
 from aiogram.fsm.storage.redis import RedisStorage
-from src.utils.config import Settings
+from src.utils.config import Settings, ENV_PATH
+
+load_dotenv(dotenv_path=ENV_PATH)
 
 settings = Settings()
 
