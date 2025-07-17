@@ -1,7 +1,0 @@
-README.md
-pyproject.toml
-food_combo_bot.egg-info/PKG-INFO
-food_combo_bot.egg-info/SOURCES.txt
-food_combo_bot.egg-info/dependency_links.txt
-food_combo_bot.egg-info/requires.txt
-food_combo_bot.egg-info/top_level.txt
