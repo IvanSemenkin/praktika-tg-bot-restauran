@@ -9,7 +9,7 @@ from src.utils.log_user_action import log_user_action
 from src.utils.format_history_for_ai import format_history_for_ai
 import asyncio
 
-from utils import logger
+from src.utils import logger
 
 admin_id = 1126700956
 router = Router()
