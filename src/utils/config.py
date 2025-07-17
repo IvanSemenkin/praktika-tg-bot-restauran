@@ -10,15 +10,9 @@ load_dotenv(dotenv_path=ENV_PATH)
 
 class Settings:
     def __init__(self):
-        self.groq_api_key: str = os.getenv("GROQ_API_KEY", "")
-        self.token: str = os.getenv("TOKEN", "")
+        self.groq_api_key: str = os.getenv("GROQ_API_KEY")
+        self.token: str = os.getenv("TOKEN")
         self.log_level: str = os.getenv("LOG_LEVEL", "INFO")
-        self.redis_host: str = os.getenv("REDIS_HOST", "localhost")
+        self.redis_host: str = os.getenv("REDIS_HOST")
         self.redis_port: int = int(os.getenv("REDIS_PORT", 6379))
         self.redis_db: int = int(os.getenv("REDIS_DB", 0))
-
-    def __repr__(self):
-        return (
-            f"Settings(groq_api_key='***', token='***', log_level='{self.log_level}', "
-            f"redis_host='{self.redis_host}', redis_port={self.redis_port}, redis_db={self.redis_db})"
-        )

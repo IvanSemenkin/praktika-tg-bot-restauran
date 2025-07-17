@@ -1,6 +1,8 @@
-**/__pycache__/
-.venv/
+__pycache__/
+
+venv/
 .env
-scr/bot/__pycache__/
-scr/storage/utils/__pycache__/
+src/bot/__pycache__/
+src/storage/utils/__pycache__/
 backup.py
+output.log
