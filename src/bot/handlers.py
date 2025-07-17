@@ -81,7 +81,7 @@ async def ai_ask(message: Message, state: FSMContext):
     
     
     try:
-        await message.answer(ans, parse_mode="HTML")
+        await message.answer(ans, parse_mode="Markdown")
     except Exception as e:
         logger.error(f"Cannot parse .md {e} type: {type(e)}")
         clean_text = ans.replace("*", "").replace("_", "").replace("`", "")
