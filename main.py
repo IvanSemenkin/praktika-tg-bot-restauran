@@ -7,7 +7,7 @@ from src.utils.config import Settings
 
 settings = Settings()
 
-logger.info(f"token: {settings.token}")
+logger.info(f"token1: {settings.token}")
 logger.info(f"redis_db: {settings.redis_db}")
 logger.info(f"redis_host: {settings.redis_host}")
 logger.info(f"redis_port: {settings.redis_port}")
