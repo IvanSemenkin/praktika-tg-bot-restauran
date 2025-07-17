@@ -1,7 +1,6 @@
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from src.utils.prompt import get_prompt, get_cuisine_info_prompt
 from langchain_huggingface import HuggingFaceEmbeddings
 
 

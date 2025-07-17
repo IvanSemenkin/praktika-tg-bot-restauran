@@ -1,5 +1,9 @@
-def log_user_action_formatter(message, prefix=""):
-    username = message.from_user.username or f"id_{message.from_user.id}"
-    full_name = message.from_user.first_name
-    last_name = message.from_user.last_name
-    return f"{prefix} Пользователь: {full_name} {last_name} (@{username}), ID: {message.from_user.id}"
+from src.utils.logger import logger
+
+def log_user_action(message, prefix):
+    user = message.from_user
+    username = user.username or f"id_{user.id}"
+    full_name = user.first_name or ""
+    last_name = user.last_name or ""
+    log_msg = f"{prefix} Пользователь: {full_name} {last_name} (@{username}), ID: {user.id}"
+    logger.info(log_msg)

@@ -1,5 +1,4 @@
-from src.utils.logger import logger
-from src.utils.log_user_action import log_user_action_formatter
+from src.utils.log_user_action import log_user_action
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -42,5 +41,5 @@ def ai_qwen_langchain(mess, message, history_context, wait_btn):
     chain = build_chain(prompt_text)
     response = chain.invoke({})
 
-    logger.info(log_user_action_formatter(message, f'Ответ от ИИ: "{response}"'))
+    log_user_action(message, f'Ответ от ИИ: "{response}"')
     return response

@@ -1,11 +1,12 @@
 import logging
-import os
-from src.utils.config import get_log_level
+from src.utils.config import Settings
 
 LOG_LEVEL = "INFO"
 
+settings = Settings()
+
 logging.basicConfig(
-    level=LOG_LEVEL,
+    level=settings.log_level,
     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
     datefmt="%H:%M:%S",
 )

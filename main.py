@@ -1,33 +1,17 @@
 from aiogram import Bot, Dispatcher
-from src.bot.handlers import router
-import redis    
+from src.bot.handlers import router 
 from src.utils.logger import logger
-import subprocess
 import asyncio
-from dotenv import load_dotenv
-from time import sleep
 from aiogram.fsm.storage.redis import RedisStorage
-import os
-from src.utils.config import get_token
-from src.utils.config import get_redis_host, get_redis_port, get_redis_db
+from src.utils.config import Settings
 
-load_dotenv()
-bot = Bot(token=get_token())
-storage = RedisStorage.from_url(f'redis://{get_redis_host()}:{get_redis_port()}/{get_redis_db()}')
+settings = Settings()
+
+bot = Bot(token=settings.token)
+storage = RedisStorage.from_url(f'redis://{settings.redis_host}:{settings.redis_port}/{settings.redis_db}')
 dp = Dispatcher(storage=storage)
 
 logger.info("Бот запущен")
-
-# try:
-#     r = redis.Redis(host="localhost", port="6380", db=0)
-#     r.ping()
-#     logger.info("Redis уже запущен")
-# except redis.ConnectionError:
-#     try:
-#         subprocess.run(["sudo", "systemctl", "start", "redis-server"], check=True)
-#         sleep(1)
-#     except subprocess.CalledProcessError:
-#         logger.info("Не удалось запустить Redis через systemd")
 
 async def main():
     dp.include_router(router)

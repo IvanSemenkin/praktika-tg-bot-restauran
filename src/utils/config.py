@@ -5,22 +5,20 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_PATH = BASE_DIR / '.env'
 
-load_dotenv(ENV_PATH)
+load_dotenv(dotenv_path=ENV_PATH)
 
-def get_groq_key() -> str:
-    return os.getenv("GROQ_API_KEY")
 
-def get_token() -> str:
-    return os.getenv("TOKEN")
+class Settings:
+    def __init__(self):
+        self.groq_api_key: str = os.getenv("GROQ_API_KEY", "")
+        self.token: str = os.getenv("TOKEN", "")
+        self.log_level: str = os.getenv("LOG_LEVEL", "INFO")
+        self.redis_host: str = os.getenv("REDIS_HOST", "localhost")
+        self.redis_port: int = int(os.getenv("REDIS_PORT", 6379))
+        self.redis_db: int = int(os.getenv("REDIS_DB", 0))
 
-def get_log_level() -> str:
-    return os.getenv("LOG_LEVEL")
-
-def get_redis_host() -> str:
-    return os.getenv("REDIS_HOST")
-
-def get_redis_port() -> int:
-    return int(os.getenv("REDIS_PORT"))
-
-def get_redis_db() -> int:
-    return int(os.getenv("REDIS_DB"))
+    def __repr__(self):
+        return (
+            f"Settings(groq_api_key='***', token='***', log_level='{self.log_level}', "
+            f"redis_host='{self.redis_host}', redis_port={self.redis_port}, redis_db={self.redis_db})"
+        )
